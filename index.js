@@ -1,4 +1,3 @@
-import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
@@ -28,7 +27,7 @@ app.use((req, res, next) => {
 })
 
 // error handling endware
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error(err)
   console.error(err.stack)
   res.status(err.status || 500).send(err.message || 'Internal server error.')
