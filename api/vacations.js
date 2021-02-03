@@ -1,5 +1,6 @@
-const router = require('express').Router()
-const {Vacation} = require('../db/models')
+import express from 'express';
+const router = express.Router();
+import {Vacation} from '../db/models/index.js';
 
 //These routes are mounted on /api/vacations
 
@@ -57,4 +58,4 @@ router.patch('/:id', async (req, res, next) => {
 
 
 
-module.exports = router;
+export default router;

@@ -1,10 +1,13 @@
-const router = require('express').Router();
-module.exports = router;
+import express from 'express';
+const router = express.Router();
 
-router.use('/vacations', require('./vacations'));
+import vacations from './vacations.js';
+router.use('/vacations', vacations);
 
 router.use((req, res, next) => {
   const error = new Error('Not Found');
   error.status = 404
   next(error)
-})
+});
+
+export default router;

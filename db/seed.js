@@ -1,7 +1,7 @@
 'use strict'
 
-const db = require('./index');
-const {Vacation} = require('./models');
+import db from './index';
+import {Vacation} from './models';
 
 const vacationsData = [
   {
@@ -68,4 +68,4 @@ if (module === require.main) {
 }
 
 // we export the seed function for testing purposes
-module.exports = seed;
+export default seed;

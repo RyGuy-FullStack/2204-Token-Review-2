@@ -1,5 +1,5 @@
-const Sequelize = require('sequelize')
-const db = require('../db')
+import Sequelize from 'sequelize';
+import db from '../db.js';
 
 const Vacation = db.define('vacation', {
   location: {
@@ -12,5 +12,4 @@ const Vacation = db.define('vacation', {
 
 
 
-module.exports = Vacation
-
+export default Vacation;
