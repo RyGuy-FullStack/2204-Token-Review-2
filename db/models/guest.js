@@ -1,15 +1,18 @@
 const Sequelize = require('sequelize');
 const db = require('../db.js');
 
-const Vacation = db.define('vacation', {
-  location: {
+const Guest = db.define('guest', {
+  username: {
     type: Sequelize.STRING,
   },
-  description: {
+  email: {
+    type: Sequelize.STRING,
+  },
+  password: {
     type: Sequelize.STRING,
   },
 })
 
 
 
-module.exports = Vacation;
+module.exports = Guest;

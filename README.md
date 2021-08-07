@@ -3,3 +3,4 @@
 Getting Started
 
     npm i
+    createdb adventure-away

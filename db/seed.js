@@ -1,32 +1,56 @@
 'use strict'
 
-import db from './index';
-import {Vacation} from './models';
+const db = require('./index');
+const {Vacation, Guest} = require('./models');
 
 const vacationsData = [
   {
     location: 'Paris',
     description: 'everyone wants to go here',
+    guestId: 1
   },
   {
     location: 'Salt Flats, Bolivia',
     description: 'This blindingly white landscape in central Bolivia really is salt.',
+    guestId: 2
   },
   {
     location: 'Chocolate hills, Philippines',
-    description: 'Alas, this is not a Willy Wonka paradise. The name comes from the brown color of the mounds in the winter. ',
+    description: 'Alas, this is not a Willy Wonka paradise. The username comes from the brown color of the mounds in the winter. ',
+    guestId: 3
   },
   {
     location: 'Simpson Desert, Australia',
     description: 'Sand that swirls through the 54,000-square-mile desert is a blood red. This is a dunal desert, with linear dunes that can be 125 miles long and as tall as 23 miles.',
+    guestId: 1
   },
   {
     location: "Giant's Causeway, Ireland",
     description: "Hexagonal stones that stacked along the water like the world's largest Qbert set. There are almost 40,000 of the ballast columns, formed 60 million years ago by magma that spewed and cooled along the coast.",
+    guestId: 2
   },
   {
     location: "The Hand in the Desert, Chile",
     description: "A huge unnerving sculpture of a hand rising out of the sand in the middle of Chile’s Atacama desert, 46 miles south of the city of Antofagasta",
+    guestId: 3
+  },
+];
+
+const guestsData = [
+  {
+    username: 'buster',
+    password: 'vacationsorbust',
+    email: 'buster@example.com',
+  },
+  {
+    username: 'sally',
+    password: 'sillysailing',
+    email: 'sally@example.com',
+  },
+  {
+    username: 'charles',
+    password: 'chuckwagon',
+    email: 'charles@example.com',
   },
 ];
 
@@ -35,8 +59,15 @@ async function seed() {
   await db.sync({force: true});
   console.log('db synced!');
 
+  // guests
+  for (const guest of guestsData) {
+    await Guest.create(guest);
+  }
+  console.log(`seeded ${guestsData.length} guests`);
+
+  // vacations
   for (const vacation of vacationsData) {
-    await Vacation.create(vacation);
+    const createdVacation = await Vacation.create(vacation);
   }
   console.log(`seeded ${vacationsData.length} vacations`);
 
@@ -68,4 +99,4 @@ if (module === require.main) {
 }
 
 // we export the seed function for testing purposes
-export default seed;
+module.exports = seed;

@@ -1,6 +1,6 @@
-import db from './db.js';
+const db = require('./db.js');
 
 // register models
-import './models/index.js';
+require('./models/index.js');
 
-export default db;
+module.exports = db;

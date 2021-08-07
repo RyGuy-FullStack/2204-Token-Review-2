@@ -1,10 +1,10 @@
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 dotenv.config();
-import express from 'express';
-import chalk from 'chalk';
-import morgan from 'morgan';
-import cors from 'cors';
-import db from './db/index.js';
+const express = require('express');
+const chalk = require('chalk');
+const morgan = require('morgan');
+const cors = require('cors');
+const db = require('./db/index.js');
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-import api from './api/index.js';
+const api = require('./api/index.js');
 app.use('/api', api);
 
 // any remaining requests with an extension (.js, .css, etc.) send 404

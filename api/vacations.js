@@ -1,13 +1,15 @@
-import express from 'express';
+const express = require('express');
 const router = express.Router();
-import {Vacation} from '../db/models/index.js';
+const {Vacation, Guest} = require('../db/models/index.js');
 
 //These routes are mounted on /api/vacations
 
 // this route gets all orders. It's accessible to only ADMIN users.
 router.get('/', async (req, res, next) => {
   try {
-    const vacations = await Vacation.findAll();
+    const vacations = await Vacation.findAll({
+      include: [{model: Guest}]
+    });
     res.send(vacations);
   } catch (err) {
     next(err)
@@ -58,4 +60,4 @@ router.patch('/:id', async (req, res, next) => {
 
 
 
-export default router;
+module.exports = router;
