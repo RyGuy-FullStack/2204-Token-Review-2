@@ -10,7 +10,11 @@ router.get('/', async (req, res, next) => {
     const vacations = await Vacation.findAll({
       include: [{model: Guest}]
     });
-    res.send(vacations);
+    res.send({
+      success: true,
+      error: null,
+      data: { vacations },
+    });
   } catch (err) {
     next(err)
   }
@@ -25,7 +29,11 @@ router.post('/', async (req, res, next) => {
     });
 
     if(newVacation) {
-      res.send(newVacation);
+      res.send({
+        success: true,
+        error: null,
+        data: { vacation: newVacation },
+      });
     } else {
       next(`Could not create vacation from location ${location} and description ${description}`);
     }
@@ -46,7 +54,11 @@ router.patch('/:id', async (req, res, next) => {
       });
   
       if(newVacation) {
-        res.send(newVacation);
+        res.send({
+          success: true,
+          error: null,
+          data: { vacation: newVacation },
+        });
       } else {
         next(`Could not create vacation from location ${location} and description ${description}`);
       }
@@ -57,7 +69,5 @@ router.patch('/:id', async (req, res, next) => {
     next(err)
   }
 })
-
-
 
 module.exports = router;
