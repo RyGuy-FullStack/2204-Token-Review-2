@@ -1,3 +1,6 @@
+const {Vacation, Guest, Cohort} = require('../db/models/index.js');
+const seed = require('../db/seed.js');
+
 function requireUser(req, res, next) {
   if (!req.user) {
     res.status(401);
@@ -46,7 +49,31 @@ const requiredNotSent = ({ requiredParams, atLeastOne = false }) => {
   }
 }
 
+const setOrCreateCohort = async (req, _, next) => {
+  const { cohortId } = req.params
+
+  const cohortIdStr = cohortId.toLowerCase()
+
+  try {
+    let cohort = await Cohort.findOne({where: { name: cohortIdStr }});
+
+    if (!cohort) {
+      const cohort = await seed(cohortIdStr);
+      console.log('?????????? cohort: ', cohort);
+      console.log('cohort.id: ', cohort.id);
+    }
+
+    req.cohort = cohort
+
+    next()
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
+}
+
 module.exports = {
   requireUser,
   requiredNotSent,
+  setOrCreateCohort,
 }

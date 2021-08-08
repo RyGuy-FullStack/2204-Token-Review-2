@@ -33,8 +33,8 @@ router.use(async (req, res, next) => {
       const id = parsedToken && parsedToken.id
       if (id) {
         req.user = await Guest.findByPk(id, {
-          attributes: ['id', 'username', 'email'],
-          raw: true
+          attributes: { exclude: ['password'] },
+          raw: true,
         });
         next();
       }

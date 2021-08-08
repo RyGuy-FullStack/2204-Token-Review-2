@@ -8,7 +8,7 @@ const {Vacation, Guest} = require('../db/models/index.js');
 router.get('/', async (req, res, next) => {
   try {
     const vacations = await Vacation.findAll({
-      include: [{model: Guest}]
+      include: [{model: Guest, attributes: { exclude: ['password'] }}]
     });
     res.send({
       success: true,

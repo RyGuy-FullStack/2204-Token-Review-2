@@ -17,7 +17,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 const api = require('./api/index.js');
-app.use('/api', api);
+const { setOrCreateCohort } = require('./api/utils.js');
+app.use('/api/:cohortId', setOrCreateCohort, api);
 
 // any remaining requests with an extension (.js, .css, etc.) send 404
 app.use((req, res, next) => {

@@ -1,7 +1,8 @@
 'use strict'
 
 const db = require('./index');
-const {Vacation, Guest} = require('./models');
+const {Vacation, Guest, Cohort} = require('./models');
+const { SYNC_FORCE_DB = false } = process.env;
 
 const vacationsData = [
   {
@@ -55,23 +56,28 @@ const guestsData = [
 ];
 
 
-async function seed() {
-  await db.sync({force: true});
+async function seed(cohortIdStr = 'foo') {
+  if(SYNC_FORCE_DB) console.log('>>>> Dropping DB. SYNC_FORCE_DB = true <<<<')
+  await db.sync({force: SYNC_FORCE_DB});
   console.log('db synced!');
+
+  const cohort = await Cohort.create({ name: cohortIdStr });
+  const cohortId = cohort.id;
 
   // guests
   for (const guest of guestsData) {
-    await Guest.create(guest);
+    await Guest.create({...guest, cohortId});
   }
   console.log(`seeded ${guestsData.length} guests`);
 
   // vacations
   for (const vacation of vacationsData) {
-    const createdVacation = await Vacation.create(vacation);
+    await Vacation.create({...vacation, cohortId});
   }
   console.log(`seeded ${vacationsData.length} vacations`);
 
   console.log(`seeded successfully`);
+  return cohort;
 }
 
 // We've separated the `seed` function from the `runSeed` function.

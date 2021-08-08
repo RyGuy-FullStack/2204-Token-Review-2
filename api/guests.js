@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { Guest } = require('../db/models');
+const { Guest, Vacation } = require('../db/models');
 const { requireUser } = require('./utils');
 const { JWT_SECRET = 'neverTell' } = process.env;
 
@@ -19,8 +19,7 @@ router.post('/login', async (req, res, next) => {
 
   try {
     const user = await Guest.findOne({
-      attributes: ['id', 'username', 'email'],
-      raw: true,
+      attributes: { exclude: ['password'] },
       where: {username, password}
     });
     
@@ -45,11 +44,15 @@ router.post('/login', async (req, res, next) => {
 
 // POST /api/guests/login
 router.get("/me", requireUser, async (req, res) => {
+  const user = await Guest.findByPk(req.user.id, {
+    attributes: { exclude: ['password'] },
+    include: [{model: Vacation}]
+  });
   res.send({
     success: true,
     error: null,
     data: {
-      ...req.user,
+      user,
     },
   });
 });
