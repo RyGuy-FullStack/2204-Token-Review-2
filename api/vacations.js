@@ -4,7 +4,8 @@ const {Vacation, Guest, Comment} = require('../db/models/index.js');
 
 //These routes are mounted on /api/vacations
 
-// this route gets all vacations. It's accessible to only ADMIN guests.
+// this route gets all vacations. It's accessible to all guests, but only adds comments to/from the guest that is logged in.
+// GET /api/<cohort-name>/vacations
 router.get('/', async (req, res, next) => {
   try {
     const vacations = await Vacation.findAll({
@@ -14,7 +15,6 @@ router.get('/', async (req, res, next) => {
       ]
     });
     if (req.guest) {
-      console.log('>>>>>>>>> req.guest', req.guest);
       vacations.forEach((vacation) => {
         vacation.dataValues.isCreator = vacation.dataValues.guest.id === Number(req.guest.id);
         vacation.dataValues.comments = vacation.dataValues.isCreator ? vacation.dataValues.comments : [];
@@ -22,8 +22,6 @@ router.get('/', async (req, res, next) => {
     } else {
       // a guest not logged in shouldn't see comments
       vacations.forEach((vacation) => {
-        console.log('vacation: ', vacation);
-        
         vacation.dataValues.isCreator = false;
         vacation.dataValues.comments = [];
       });
@@ -38,6 +36,7 @@ router.get('/', async (req, res, next) => {
   }
 })
 
+// POST /api/<cohort-name>/vacations
 router.post('/', async (req, res, next) => {
   try {
     const {location, description} = req.body;
@@ -60,6 +59,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
+// PATCH /api/<cohort-name>/vacations/:id
 router.patch('/:id', async (req, res, next) => {
   try {
     const {id} = req.params;
@@ -78,7 +78,7 @@ router.patch('/:id', async (req, res, next) => {
           data: { vacation: newVacation },
         });
       } else {
-        next(`Could not create vacation from location ${location} and description ${description}`);
+        next(`Could not edit vacation from location ${location} and description ${description}`);
       }
     } else{
       next(`could not find vacation id: ${id}`)

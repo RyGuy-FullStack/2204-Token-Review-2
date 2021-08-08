@@ -4,7 +4,7 @@ const { JWT_SECRET = 'neverTell'} = process.env;
 const db = require('../db');
 const { Vacation, Guest } = require('../db/models/index.js');
 
-// GET /api/health
+// GET /api/<cohort-name>/health
 router.get('/health', async (req, res, next) => {
   try {
     const uptime = parseFloat(process.uptime() / 60).toFixed(2);
