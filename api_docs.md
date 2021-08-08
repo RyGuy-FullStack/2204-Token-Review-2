@@ -173,7 +173,7 @@ If the API authenticates the username and password, the following object will be
 
 ### `GET /api/COHORT-NAME/guests/me`
 
-This route is used to grab an already logged in guest's relevant data. It includes messages they have received, which might be useful if you wish to build out notifications for the guest. You must pass a valid token with this request, or it will be rejected.
+This route is used to grab an already logged in guest's relevant data. It includes comments they have received, which might be useful if you wish to build out notifications for the guest. You must pass a valid token with this request, or it will be rejected.
 
 #### Request Parameters
 
@@ -183,7 +183,7 @@ No request parameters are necessary for this route.
 
 * `guest` (`object`)
     * `vacations` (`array` of `vacation`): an array of vacation objects made by the guest
-    * `messages` (`array` of `message`): an array of messages made on vacations made to or by the guest
+    * `comments` (`array` of `comment`): an array of comments made on vacations made to or by the guest
     * `id` (`string`): the database identifier of the guest
     * `username` (`string`): the username of the guest
 
@@ -209,50 +209,41 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/guests/me', {
     "vacations": [
         {
             "location": "[On Request]",
-            "willDeliver": false,
-            "messages": [
+            "comments": [
                 {
                     "id": "5e8d1f2539e7a70017a7c968",
-                    "fromGuest": {
+                    "guest": {
                         "id": "5e8d1f2539e7a70017a7c962",
                         "username": "jane1234"
                     },
                     "content": "I am very much in the market for a fine violin."
                 }
             ],
-            "active": true,
             "id": "5e8d1f2539e7a70017a7c964",
-            "author": "5e8d1f2539e7a70017a7c961",
-            "title": "Practically new Stradivarius",
+            "guestId": "5e8d1f2539e7a70017a7c961",
             "description": "I've really only used this three or four times.  I thought it would be a good purchase, shows what I know.",
             "price": "$14.3 million",
             "createdAt": "2020-04-08T00:47:33.794Z",
             "updatedAt": "2020-04-08T00:47:33.865Z",
-            "__v": 0
         },
         {
             "location": "Bronx, NY",
-            "willDeliver": false,
-            "messages": [],
-            "active": true,
+            "comments": [],
             "id": "5e8d1f8647b6ce0017600593",
-            "title": "Schwinn Bicycle",
             "price": "3.88",
             "description": "This is a 19 speed bicycle, barely used.",
-            "author": "5e8d1f2539e7a70017a7c961",
+            "guestId": "5e8d1f2539e7a70017a7c961",
             "createdAt": "2020-04-08T00:49:10.248Z",
             "updatedAt": "2020-04-08T00:49:10.248Z",
-            "__v": 0
         }
     ],
-    "messages": [
+    "comments": [
         {
             "id": "5e8d1f2539e7a70017a7c968",
             "vacation": {
                 "id": "5e8d1f2539e7a70017a7c964",
-                "title": "Practically new Stradivarius"
             },
-            "fromGuest": {
+            "guest": {
                 "id": "5e8d1f2539e7a70017a7c962",
                 "username": "jane1234"
             },
@@ -262,9 +253,8 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/guests/me', {
             "id": "5e8d1f2539e7a70017a7c969",
             "vacation": {
                 "id": "5e8d1f2539e7a70017a7c965",
-                "title": "Golden Retriever puppies"
             },
-            "fromGuest": {
+            "guest": {
                 "id": "5e8d1f2539e7a70017a7c961",
                 "username": "joe1234"
             },
@@ -275,9 +265,8 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/guests/me', {
             "content": "I really love this item.  Can I have it?",
             "vacation": {
                 "id": "5e8d1f2539e7a70017a7c965",
-                "title": "Golden Retriever puppies"
             },
-            "fromGuest": {
+            "guest": {
                 "id": "5e8d1f2539e7a70017a7c961",
                 "username": "joe1234"
             }
@@ -285,7 +274,6 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/guests/me', {
     ],
     "id": "5e8d1f2539e7a70017a7c961",
     "username": "joe1234",
-    "__v": 0
 }
 ```
 
@@ -365,21 +353,17 @@ No request parameters are necessary for this route.
 
 * `vacations` (`array` of `object`):
     * `id` (`string`): This is the database identifier for the `vacation` object.
-    * `author` (`object`)
+    * `guest` (`object`)
         * `id` (`string`): This is the database identifier for the `guest` which created this `vacation`
         * `username` (`string`): This is the username for the `guest` which created this `vacation`
     * `description` (`string`): This is the description of the posted item.
-    * `isAuthor` (`boolean`): If a valid token is present with the request, `isAuthor` will be true for any vacation made by the logged in guest.
+    * `isCreator` (`boolean`): If a valid token is present with the request, `isCreator` will be true for any vacation made by the logged in guest.
     * `location` (`string`): This is the location of the posted item.
-    * `message` (`array` of `message` objects): If a valid token is present with the request, and `isAuthor` is true, this will contain an array of messages left for this posted item. If either is are not, this will be an empty array.
-        * `fromGuest` (`object`)
-            * `id` (`string`): This is the database identifier for the `guest` which created this `message`
-            * `username` (`string`): This is the username for the `guest` which created this `message`
+    * `comment` (`array` of `comment` objects): If a valid token is present with the request, and `isCreator` is true, this will contain an array of comments left for this posted item. If either is are not, this will be an empty array.
+        * `guest` (`object`)
+            * `id` (`string`): This is the database identifier for the `guest` which created this `comment`
+            * `username` (`string`): This is the username for the `guest` which created this `comment`
         * `content` (`string`): This is the text content of the message
-    * `price` (`string`): This is the price for the posted item.
-    * `title` (`string`): This is the title (or name) of the posted item.
-    * `willDeliver` (`boolean`): This is `true` if the `guest` that posted this item will deliver it, and `false` if they require pickup.
-    * `active` (`boolean`): This is `true` by default, and should only be false when the guest deletes their posting.
     * `createdAt` and `updatedAt` (`string`): These are the timestamps for when the vacation was inserted into the database, or most recently updated.
 
 #### Sample Call
@@ -403,75 +387,59 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations')
         "vacations": [
             {
                 "location": "[On Request]",
-                "willDeliver": false,
-                "messages": [],
-                "active": true,
+                "comments": [],
                 "id": "5e8d1a02829c8e0017c20b58",
-                "author": {
+                "guestId": {
                     "id": "5e8d1a02829c8e0017c20b55",
                     "username": "joe1234"
                 },
-                "title": "Practically new Stradivarius",
                 "description": "I've really only used this three or four times.  I thought it would be a good purchase, shows what I know.",
                 "price": "$14.3 million",
                 "createdAt": "2020-04-08T00:25:38.106Z",
                 "updatedAt": "2020-04-08T00:25:38.264Z",
-                "__v": 0,
-                "isAuthor": false
+                "isCreator": false
             },
             {
                 "location": "[On Request]",
-                "willDeliver": true,
-                "messages": [],
-                "active": true,
+                "comments": [],
                 "id": "5e8d1a02829c8e0017c20b59",
-                "author": {
+                "guestId": {
                     "id": "5e8d1a02829c8e0017c20b56",
                     "username": "jane1234"
                 },
-                "title": "Golden Retriever puppies",
                 "description": "Not looking for any money, just want to find a good home for these four beautiful pups.",
                 "price": "free",
                 "createdAt": "2020-04-08T00:25:38.167Z",
                 "updatedAt": "2020-04-08T00:25:38.268Z",
-                "__v": 0,
-                "isAuthor": false
+                "isCreator": false
             },
             {
                 "location": "Downtown Los Angeles, CA",
-                "willDeliver": false,
-                "messages": [],
-                "active": true,
+                "comments": [],
                 "id": "5e8d1a02829c8e0017c20b5a",
-                "author": {
+                "guestId": {
                     "id": "5e8d1a02829c8e0017c20b56",
                     "username": "jane1234"
                 },
-                "title": "Chest Freezer",
                 "description": "This freezer is nearly 50 years old, but still works perfectly.  It is quite heavy, so I will need some help moving it.",
                 "price": "$50",
                 "createdAt": "2020-04-08T00:25:38.168Z",
                 "updatedAt": "2020-04-08T00:25:38.168Z",
-                "__v": 0,
-                "isAuthor": false
+                "isCreator": false
             },
             {
                 "location": "Ames, IA",
-                "willDeliver": true,
-                "messages": [],
-                "active": true,
+                "comments": [],
                 "id": "5e8d1a02829c8e0017c20b5b",
-                "author": {
+                "guestId": {
                     "id": "5e8d1a02829c8e0017c20b57",
                     "username": "caesar1234"
                 },
-                "title": "NordicTrack Freestrider Elliptical Trainer",
                 "description": "To be honest, it is more amazing than my resolve.",
                 "price": "$1400, OBO",
                 "createdAt": "2020-04-08T00:25:38.186Z",
                 "updatedAt": "2020-04-08T00:25:38.273Z",
-                "__v": 0,
-                "isAuthor": false
+                "isCreator": false
             }
         ]
     }
@@ -485,31 +453,24 @@ A request to this endpoint will attempt to create a new post. You must pass a va
 #### Request Parameters
 
 * `vacation` (`object`, required)
-    * `title` (`string`, required): the title/name of the item for sale
     * `description` (`string`, required): the description of the posted item
-    * `price` (`string`, required): the price of the posted item
     * `location` (`string`, optional): the location of the posted item, will default to `[On Request]` if not supplied
-    * `willDeliver` (`boolean`, optional): whether or not the poster will deliver the item, default is `false`
 
 #### Return Parameters
 
 * `vacation` (`object`)
     * `id` (`string`): This is the database identifier for the `vacation` object.
-    * `author` (`object`)
+    * `guest` (`object`)
         * `id` (`string`): This is the database identifier for the `guest` which created this `vacation`
         * `username` (`string`): This is the username for the `guest` which created this `vacation`
     * `description` (`string`): This is the description of the posted item.
-    * `isAuthor` (`boolean`): If a valid token is present with the request, `isAuthor` will be true for any vacation made by the logged in guest.
+    * `isCreator` (`boolean`): If a valid token is present with the request, `isCreator` will be true for any vacation made by the logged in guest.
     * `location` (`string`): This is the location of the posted item.
-    * `message` (`array` of `message` objects): If a valid token is present with the request, and `isAuthor` is true, this will contain an array of messages left for this posted item. If either is are not, this will be an empty array.
-        * `author` (`object`)
-            * `id` (`string`): This is the database identifier for the `guest` which created this `message`
-            * `username` (`string`): This is the username for the `guest` which created this `message`
+    * `comment` (`array` of `comment` objects): If a valid token is present with the request, and `isCreator` is true, this will contain an array of comments left for this posted item. If either is are not, this will be an empty array.
+        * `guest` (`object`)
+            * `id` (`string`): This is the database identifier for the `guest` which created this `comment`
+            * `username` (`string`): This is the username for the `guest` which created this `comment`
         * `content` (`string`): This is the text content of the message
-    * `price` (`string`): This is the price for the posted item.
-    * `title` (`string`): This is the title (or name) of the posted item.
-    * `willDeliver` (`boolean`): This is `true` if the `guest` that posted this item will deliver it, and `false` if they require pickup.
-    * `active` (`boolean`): This is `true` by default, and should only be false when the guest deletes their posting.
     * `createdAt` and `updatedAt` (`string`): These are the timestamps for when the vacation was inserted into the database, or most recently updated.
 
 #### Sample Call
@@ -545,21 +506,17 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations', {
     "data": {
         "vacation": {
             "location": "Bronx, NY",
-            "willDeliver": false,
-            "messages": [],
-            "active": true,
+            "comments": [],
             "id": "5e8d1bd48829fb0017d2233b",
-            "title": "Schwinn Bicycle",
             "price": "3.88",
             "description": "This is a 19 speed bicycle, barely used.",
-            "author": {
+            "guestId": {
                 "id": "5e8d1a02829c8e0017c20b55",
                 "username": "joe1234"
             },
             "createdAt": "2020-04-08T00:33:24.157Z",
             "updatedAt": "2020-04-08T00:33:24.157Z",
-            "__v": 0,
-            "isAuthor": true
+            "isCreator": true
         }
     }
 }
@@ -574,31 +531,24 @@ This endpoint will edit a vacation whose `id` is equal to `POST_ID`.  The reques
 Only the fields in the request will be updated.
 
 * `vacation` (`object`, required)
-    * `title` (`string`, optional): the title/name of the item for sale
     * `description` (`string`, optional): the description of the posted item
-    * `price` (`string`, optional): the price of the posted item
     * `location` (`string`, optional): the location of the posted item
-    * `willDeliver` (`boolean`, optional): whether or not the poster will deliver the item
 
 #### Return Parameters
 
 * `vacation` (`object`): The UPDATED version of the post
     * `id` (`string`): This is the database identifier for the `vacation` object.
-    * `author` (`object`)
+    * `guest` (`object`)
         * `id` (`string`): This is the database identifier for the `guest` which created this `vacation`
         * `username` (`string`): This is the username for the `guest` which created this `vacation`
     * `description` (`string`): This is the description of the posted item.
-    * `isAuthor` (`boolean`): If a valid token is present with the request, `isAuthor` will be true for any vacation made by the logged in guest.
+    * `isCreator` (`boolean`): If a valid token is present with the request, `isCreator` will be true for any vacation made by the logged in guest.
     * `location` (`string`): This is the location of the posted item.
-    * `messages` (`array` of `message` objects): If a valid token is present with the request, and `isAuthor` is true, this will contain an array of messages left for this posted item. If either is are not, this will be an empty array.
-        * `author` (`object`)
-            * `id` (`string`): This is the database identifier for the `guest` which created this `message`
-            * `username` (`string`): This is the username for the `guest` which created this `message`
+    * `comments` (`array` of `comment` objects): If a valid token is present with the request, and `isCreator` is true, this will contain an array of comments left for this posted item. If either is are not, this will be an empty array.
+        * `guest` (`object`)
+            * `id` (`string`): This is the database identifier for the `guest` which created this `comment`
+            * `username` (`string`): This is the username for the `guest` which created this `comment`
         * `content` (`string`): This is the text content of the message
-    * `price` (`string`): This is the price for the posted item.
-    * `title` (`string`): This is the title (or name) of the posted item.
-    * `willDeliver` (`boolean`): This is `true` if the `guest` that posted this item will deliver it, and `false` if they require pickup.
-    * `active` (`boolean`): This is `true` by default, and should only be false when the guest deletes their posting.
     * `createdAt` and `updatedAt` (`string`): These are the timestamps for when the vacation was inserted into the database, or most recently updated.
 
 #### Sample Call
@@ -635,21 +585,17 @@ fetch('http://adventure-away.herokuapp.com/api/COHORT-NAME/vacations/5e8d1bd4882
     "data": {
         "vacation": {
             "location": "Bronx, NY",
-            "willDeliver": false,
-            "messages": [],
-            "active": true,
+            "comments": [],
             "id": "5e8d1bd48829fb0017d2233b",
-            "title": "Schwinn Bicycle",
             "price": "3.88",
             "description": "This is a 19 speed bicycle, barely used.",
-            "author": {
+            "guestId": {
                 "id": "5e8d1a02829c8e0017c20b55",
                 "username": "joe1234"
             },
             "createdAt": "2020-04-08T00:33:24.157Z",
             "updatedAt": "2020-04-08T00:33:24.157Z",
-            "__v": 0,
-            "isAuthor": true
+            "isCreator": true
         }
     }
 }
@@ -659,7 +605,6 @@ fetch('http://adventure-away.herokuapp.com/api/COHORT-NAME/vacations/5e8d1bd4882
 
 This endpoint will delete a vacation whose `id` is equal to `POST_ID`.  The request will be rejected if it is either missing a valid token, or if the guest represented by the token is not the guest that created the original post.
 
-**Note** that this API does not delete vacations, but rather sets the post's `active` property to `false`.
 
 #### Request Parameters
 
@@ -697,30 +642,30 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations/5e8d1bd488
 
 ## Messages
 
-A `message` is associated both to a specific `vacation`, as well as to the `guest` which creates the message.
+A `comment` is associated both to a specific `vacation`, as well as to the `guest` which creates the message.
 
-### `POST /api/COHORT-NAME/vacations/POST_ID/messages`
+### `POST /api/COHORT-NAME/vacations/POST_ID/comments`
 
 This endpoint will create a new message for a vacation whose `id` is equal to `POST_ID`.  You must pass a valid token with this request, or it will be rejected.
 
 #### Request Parameters
 
-* `message` (`object`, required)
+* `comment` (`object`, required)
     * `content` (`string`, required): The content of the message
 
 #### Return Parameters
 
-* `message` (`object`)
+* `comment` (`object`)
     * `id` (`string`): The database identifier of the new message
     * `content` (`string`): The content of the new message
     * `vacation` (`string`): The database identifier of the posting the message is for
-    * `fromGuest` (`string`): The database identifier of the author of the message
+    * `guest` (`string`): The database identifier of the author of the message
     * `createdAt` and `updatedAt` (`string`): These are the timestamps for when the vacation was inserted into the database, or most recently updated
 
 #### Sample Call
 
 ```js
-fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations/5e8929ddd439160017553e06/messages', {
+fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations/5e8929ddd439160017553e06/comments', {
   method: "POST",
   headers: {
     'Content-Type': 'application/json',
@@ -749,10 +694,9 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations/5e8929ddd4
             "id": "5e8d1fd747b6ce0017600594",
             "content": "I really love this item.  Can I have it?",
             "vacation": "5e8d1f2539e7a70017a7c965",
-            "fromGuest": "5e8d1f2539e7a70017a7c961",
+            "guest": "5e8d1f2539e7a70017a7c961",
             "createdAt": "2020-04-08T00:50:31.402Z",
             "updatedAt": "2020-04-08T00:50:31.402Z",
-            "__v": 0
         }
     }
 }

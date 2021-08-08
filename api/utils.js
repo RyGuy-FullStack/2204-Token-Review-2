@@ -59,8 +59,6 @@ const setOrCreateCohort = async (req, _, next) => {
 
     if (!cohort) {
       const cohort = await seed(cohortIdStr);
-      console.log('?????????? cohort: ', cohort);
-      console.log('cohort.id: ', cohort.id);
     }
 
     req.cohort = cohort

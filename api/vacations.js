@@ -13,6 +13,21 @@ router.get('/', async (req, res, next) => {
         {model: Comment},
       ]
     });
+    if (req.guest) {
+      console.log('>>>>>>>>> req.guest', req.guest);
+      vacations.forEach((vacation) => {
+        vacation.dataValues.isCreator = vacation.dataValues.guest.id === Number(req.guest.id);
+        vacation.dataValues.comments = vacation.dataValues.isCreator ? vacation.dataValues.comments : [];
+      });
+    } else {
+      // a guest not logged in shouldn't see comments
+      vacations.forEach((vacation) => {
+        console.log('vacation: ', vacation);
+        
+        vacation.dataValues.isCreator = false;
+        vacation.dataValues.comments = [];
+      });
+    }
     res.send({
       success: true,
       error: null,
