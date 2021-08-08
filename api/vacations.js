@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const {Vacation, Guest} = require('../db/models/index.js');
+const {Vacation, Guest, Comment} = require('../db/models/index.js');
 
 //These routes are mounted on /api/vacations
 
-// this route gets all orders. It's accessible to only ADMIN users.
+// this route gets all vacations. It's accessible to only ADMIN guests.
 router.get('/', async (req, res, next) => {
   try {
     const vacations = await Vacation.findAll({
-      include: [{model: Guest, attributes: { exclude: ['password'] }}]
+      include: [
+        {model: Guest, attributes: { exclude: ['password'] }},
+        {model: Comment},
+      ]
     });
     res.send({
       success: true,

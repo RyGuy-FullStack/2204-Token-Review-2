@@ -1,11 +1,11 @@
 const {Vacation, Guest, Cohort} = require('../db/models/index.js');
 const seed = require('../db/seed.js');
 
-function requireUser(req, res, next) {
-  if (!req.user) {
+function requireGuest(req, res, next) {
+  if (!req.guest) {
     res.status(401);
     next({
-      name: "MissingUserError",
+      name: "MissingGuestError",
       message: "You must be logged in to perform this action"
     });
   }
@@ -73,7 +73,7 @@ const setOrCreateCohort = async (req, _, next) => {
 }
 
 module.exports = {
-  requireUser,
+  requireGuest,
   requiredNotSent,
   setOrCreateCohort,
 }

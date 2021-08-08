@@ -17,7 +17,7 @@ router.get('/health', async (req, res, next) => {
   }
 });
 
-// set `req.user` if possible
+// set `req.guest` if possible
 router.use(async (req, res, next) => {
   const prefix = 'Bearer ';
   const auth = req.header('Authorization');
@@ -32,7 +32,7 @@ router.use(async (req, res, next) => {
       
       const id = parsedToken && parsedToken.id
       if (id) {
-        req.user = await Guest.findByPk(id, {
+        req.guest = await Guest.findByPk(id, {
           attributes: { exclude: ['password'] },
           raw: true,
         });
@@ -50,8 +50,8 @@ router.use(async (req, res, next) => {
 });
 
 router.use((req, res, next) => {
-  if (req.user) {
-    console.log("User is set:", req.user);
+  if (req.guest) {
+    console.log("Guest is set:", req.guest);
   }
   next();
 });

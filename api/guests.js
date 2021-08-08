@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { Guest, Vacation } = require('../db/models');
-const { requireUser } = require('./utils');
+const { requireGuest } = require('./utils');
 const { JWT_SECRET = 'neverTell' } = process.env;
 
 // POST /api/guests/login
@@ -18,22 +18,22 @@ router.post('/login', async (req, res, next) => {
   }
 
   try {
-    const user = await Guest.findOne({
+    const guest = await Guest.findOne({
       attributes: { exclude: ['password'] },
       where: {username, password}
     });
     
-    if(!user) {
+    if(!guest) {
       next({
         name: 'IncorrectCredentialsError',
         message: 'Username or password is incorrect',
       })
     } else {
-      const token = jwt.sign({id: user.id, username: user.username}, JWT_SECRET, { expiresIn: '1w' });
+      const token = jwt.sign({id: guest.id, username: guest.username}, JWT_SECRET, { expiresIn: '1w' });
       res.send({
         success: true,
         error: null,
-        data: { user, message: "you're logged in!", token },
+        data: { guest, message: "you're logged in!", token },
       });
     }
   } catch (error) {
@@ -43,8 +43,8 @@ router.post('/login', async (req, res, next) => {
 });
 
 // POST /api/guests/login
-router.get("/me", requireUser, async (req, res) => {
-  const user = await Guest.findByPk(req.user.id, {
+router.get("/me", requireGuest, async (req, res) => {
+  const guest = await Guest.findByPk(req.guest.id, {
     attributes: { exclude: ['password'] },
     include: [{model: Vacation}]
   });
@@ -52,7 +52,7 @@ router.get("/me", requireUser, async (req, res) => {
     success: true,
     error: null,
     data: {
-      user,
+      guest,
     },
   });
 });

@@ -1,7 +1,7 @@
 'use strict'
 
 const db = require('./index');
-const {Vacation, Guest, Cohort} = require('./models');
+const { Vacation, Guest, Cohort, Comment } = require('./models');
 const { SYNC_FORCE_DB = false } = process.env;
 
 const vacationsData = [
@@ -55,6 +55,39 @@ const guestsData = [
   },
 ];
 
+const commentsData = [
+  {
+    content: 'everyone (including me) totally DOES want to go here',
+    guestId: 1,
+    vacationId: 1
+  },
+  {
+    content: 'Thats some salt, man!',
+    guestId: 2,
+    vacationId: 2
+  },
+  {
+    content: 'Bummer theres no real chocolate.',
+    guestId: 3,
+    vacationId: 3
+  },
+  {
+    content: 'Oh lala! Paris!',
+    guestId: 1,
+    vacationId: 1
+  },
+  {
+    content: "Is the salt edible?",
+    guestId: 2,
+    vacationId: 2
+  },
+  {
+    content: "Interesting that it's brown in the winter...",
+    guestId: 3,
+    vacationId: 3
+  },
+];
+
 
 async function seed(cohortIdStr = 'foo') {
   if(SYNC_FORCE_DB) console.log('>>>> Dropping DB. SYNC_FORCE_DB = true <<<<')
@@ -75,6 +108,12 @@ async function seed(cohortIdStr = 'foo') {
     await Vacation.create({...vacation, cohortId});
   }
   console.log(`seeded ${vacationsData.length} vacations`);
+
+  // comments
+  for (const comment of commentsData) {
+    await Comment.create({...comment, cohortId});
+  }
+  console.log(`seeded ${commentsData.length} comments`);
 
   console.log(`seeded successfully`);
   return cohort;
