@@ -90,8 +90,10 @@ const commentsData = [
 
 
 async function seed(cohortIdStr = 'foo') {
-  if(SYNC_FORCE_DB) console.log('>>>> Dropping DB. SYNC_FORCE_DB = true <<<<')
-  await db.sync({force: SYNC_FORCE_DB});
+  if (SYNC_FORCE_DB === 'true') {
+    await db.sync({force: true});
+    console.log(`>>>> DROPPING DB. { force: true } <<<<`);
+  }
   console.log('db synced!');
 
   const cohort = await Cohort.create({ name: cohortIdStr });

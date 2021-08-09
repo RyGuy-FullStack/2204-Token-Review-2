@@ -27,12 +27,20 @@ app.use((req, res, next) => {
   next(err);
 })
 
-// error handling endware
-app.use((err, req, res) => {
-  console.error(err)
-  console.error(err.stack)
-  res.status(err.status || 500).send(err.message || 'Internal server error.')
-})
+// error handling middleware
+app.use((error, req, res, next) => {
+  console.error('SERVER ERROR: ', error);
+  if(res.statusCode < 400) res.status(500);
+  res.send({
+    success: false,
+    error: {
+      name: error.name,
+      message: error.message,
+      table: error.table
+    },
+    data: null
+  });
+});
 
 const {PORT = 4000} = process.env;
 

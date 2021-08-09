@@ -58,7 +58,7 @@ const setOrCreateCohort = async (req, _, next) => {
     let cohort = await Cohort.findOne({where: { name: cohortIdStr }});
 
     if (!cohort) {
-      const cohort = await seed(cohortIdStr);
+      cohort = await seed(cohortIdStr);
     }
 
     req.cohort = cohort

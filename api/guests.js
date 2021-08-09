@@ -65,8 +65,20 @@ router.post('/register', async (req, res, next) => {
         message: 'A guest by that username already exists',
       })
     } else {
-      const guest = await Guest.create({username, password, cohortId: req.cohort.id});
-      const token = jwt.sign({id: guest.id, username: guest.username}, JWT_SECRET, { expiresIn: '1w' });
+      const guest = await Guest.create({
+        username,
+        password,
+        cohortId: req.cohort.id
+      });
+      const token = jwt.sign(
+        {
+          id: guest.id,
+          username:
+          guest.username
+        },
+        JWT_SECRET,
+        { expiresIn: '1w' }
+      );
 
       res.send({
         success: true,

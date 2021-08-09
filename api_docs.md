@@ -276,67 +276,6 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/guests/me', {
     "username": "joe1234",
 }
 ```
-
-## Test Routes
-
-There are two test routes for you to use that don't interact directly with the data.
-
-### `GET /api/COHORT-NAME/test/me`
-
-If you pass a valid token to this route, you will get a response similar to this:
-
-```js
-{
-    "success": true,
-    "error": null,
-    "data": {
-        "guest": {
-            "username": "superman27"
-        },
-        "message": "you are logged in!"
-    }
-}
-```
-
-If you do not, you will get the standard response for all authenticated routes:
-
-```js
-{
-    "success": false,
-    "error": {
-        "type": "InvalidToken",
-        "message": "Invalid token, please sign up or log in"
-    },
-    "data": null
-}
-```
-
-### `GET /api/COHORT-NAME/test/data`
-
-If you pass a valid token to this route, you will get a response similar to this:
-
-```js
-{
-    "success": true,
-    "error": null,
-    "data": {
-        "message": "you are logged in!"
-    }
-}
-```
-
-If you do not, you will still get a response:
-
-```js
-{
-    "success": true,
-    "error": null,
-    "data": {
-        "message": "you are not logged in!"
-    }
-}
-```
-
 ## Posts
 
 The main data type is a `vacation`, not to be confused with a POST request. A vacation holds information about items for sale, including their cost, description, who posted it, and where they are located.
@@ -522,9 +461,9 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations', {
 }
 ```
 
-### `PATCH /api/COHORT-NAME/vacations/POST_ID`
+### `PATCH /api/COHORT-NAME/vacations/VACATION_ID`
 
-This endpoint will edit a vacation whose `id` is equal to `POST_ID`.  The request will be rejected if it is either missing a valid token, or if the guest represented by the token is not the guest that created the original post.
+This endpoint will edit a vacation whose `id` is equal to `VACATION_ID`.  The request will be rejected if it is either missing a valid token, or if the guest represented by the token is not the guest that created the original post.
 
 #### Request Parameters
 
@@ -601,9 +540,9 @@ fetch('http://adventure-away.herokuapp.com/api/COHORT-NAME/vacations/5e8d1bd4882
 }
 ```
 
-### `DELETE /api/COHORT-NAME/vacations/POST_ID`
+### `DELETE /api/COHORT-NAME/vacations/VACATION_ID`
 
-This endpoint will delete a vacation whose `id` is equal to `POST_ID`.  The request will be rejected if it is either missing a valid token, or if the guest represented by the token is not the guest that created the original post.
+This endpoint will delete a vacation whose `id` is equal to `VACATION_ID`.  The request will be rejected if it is either missing a valid token, or if the guest represented by the token is not the guest that created the original post.
 
 
 #### Request Parameters
@@ -644,9 +583,9 @@ fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations/5e8d1bd488
 
 A `comment` is associated both to a specific `vacation`, as well as to the `guest` which creates the message.
 
-### `POST /api/COHORT-NAME/vacations/POST_ID/comments`
+### `POST /api/COHORT-NAME/vacations/VACATION_ID/comments`
 
-This endpoint will create a new message for a vacation whose `id` is equal to `POST_ID`.  You must pass a valid token with this request, or it will be rejected.
+This endpoint will create a new message for a vacation whose `id` is equal to `VACATION_ID`.  You must pass a valid token with this request, or it will be rejected.
 
 #### Request Parameters
 

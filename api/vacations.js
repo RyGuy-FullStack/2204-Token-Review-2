@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {Vacation, Guest, Comment} = require('../db/models/index.js');
+const { requireGuest } = require('./utils.js');
 
 //These routes are mounted on /api/vacations
 
@@ -9,6 +10,9 @@ const {Vacation, Guest, Comment} = require('../db/models/index.js');
 router.get('/', async (req, res, next) => {
   try {
     const vacations = await Vacation.findAll({
+      where: {
+        cohortId: req.cohort.id
+      },
       include: [
         {model: Guest, attributes: { exclude: ['password'] }},
         {model: Comment},
@@ -37,12 +41,14 @@ router.get('/', async (req, res, next) => {
 })
 
 // POST /api/<cohort-name>/vacations
-router.post('/', async (req, res, next) => {
+router.post('/', requireGuest, async (req, res, next) => {
   try {
     const {location, description} = req.body;
     const newVacation = await Vacation.create({
       location,
-      description
+      description,
+      cohortId: req.cohort.id,
+      guestId: req.guest.id
     });
 
     if(newVacation) {
@@ -52,7 +58,7 @@ router.post('/', async (req, res, next) => {
         data: { vacation: newVacation },
       });
     } else {
-      next(`Could not create vacation from location ${location} and description ${description}`);
+      next({message: `Could not create vacation from location ${location} and description ${description}`});
     }
   } catch (err) {
     next(err)
@@ -60,28 +66,80 @@ router.post('/', async (req, res, next) => {
 })
 
 // PATCH /api/<cohort-name>/vacations/:id
-router.patch('/:id', async (req, res, next) => {
+router.patch('/:id', requireGuest, async (req, res, next) => {
   try {
     const {id} = req.params;
     const {location, description} = req.body;
     const prevVacation = await Vacation.findByPk(id);
     if(prevVacation) {
-      const newVacation = await prevVacation.update({
-        location,
-        description
-      });
-  
-      if(newVacation) {
-        res.send({
-          success: true,
-          error: null,
-          data: { vacation: newVacation },
+      if(prevVacation.guestId !== req.guest.id) {
+        res.status(403);
+        next({
+          name: "UnauthorizedError",
+          message: "You must be the same user who created this vacation to perform this action"
         });
       } else {
-        next(`Could not edit vacation from location ${location} and description ${description}`);
+        const newVacation = await prevVacation.update({
+          location,
+          description
+        });
+        if(newVacation) {
+          res.send({
+            success: true,
+            error: null,
+            data: { vacation: newVacation },
+          });
+        } else {
+          next({
+            name: "FailedToEdit",
+            message: `Could not edit vacation from location ${location} and description ${description}`
+          });
+        }
       }
     } else{
-      next(`could not find vacation id: ${id}`)
+      next({
+        name: "NotFound",
+        message: `could not find vacation id: ${id}`
+      });
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
+// DELETE /api/<cohort-name>/vacations/:id
+router.delete('/:id', requireGuest, async (req, res, next) => {
+  try {
+    const {id} = req.params;
+    const prevVacation = await Vacation.findByPk(id);
+    if(prevVacation) {
+      if(prevVacation.guestId !== req.guest.id) {
+        res.status(403);
+        next({
+          name: "UnauthorizedError",
+          message: "You must be the same user who created this vacation to perform this action"
+        });
+      } else {
+        const success = await prevVacation.destroy({returning: true});
+        console.log('success: ', success);
+        if(success) {
+          res.send({
+            success: true,
+            error: null,
+            data: { deletedVacation },
+          });
+        } else {
+          next({
+            name: "FailedToDelete",
+            message: "Could not delete this vacation"
+          });
+        }
+      }
+    } else{
+      next({
+        name: "NotFound",
+        message: `could not find vacation id: ${id}`
+      });
     }
   } catch (err) {
     next(err)
