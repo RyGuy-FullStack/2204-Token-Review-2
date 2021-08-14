@@ -7,6 +7,10 @@ const Vacation = db.define('vacation', {
   },
   description: {
     type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    },
   },
 })
 
