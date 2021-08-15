@@ -14,8 +14,16 @@ router.get('/', async (req, res, next) => {
         cohortId: req.cohort.id
       },
       include: [
-        {model: Guest, attributes: { exclude: ['password'] }},
-        {model: Comment},
+        {
+          model: Guest,
+          attributes: { exclude: ['password'] }
+        },
+        {
+          model: Comment,
+          include: [{
+            model: Guest
+          }]
+        },
       ]
     });
     if (req.guest) {
