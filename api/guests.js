@@ -18,10 +18,7 @@ router.post('/login', async (req, res, next) => {
   }
 
   try {
-    const guest = await Guest.findOne({
-      attributes: { exclude: ['password'] },
-      where: {username, password}
-    });
+    const guest = await Guest.login(username, password)
     
     if(!guest) {
       next({
@@ -70,6 +67,7 @@ router.post('/register', async (req, res, next) => {
         password,
         cohortId: req.cohort.id
       });
+      guest.password = undefined;
       const token = jwt.sign(
         {
           id: guest.id,
@@ -99,7 +97,10 @@ router.get("/me", requireGuest, async (req, res) => {
     include: [{
       model: Vacation,
       include: [{
-        model: Comment
+        model: Comment,
+        include: [{
+          model: Guest
+        }]
       }]
     }]
   });

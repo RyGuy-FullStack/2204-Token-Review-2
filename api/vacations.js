@@ -14,8 +14,16 @@ router.get('/', async (req, res, next) => {
         cohortId: req.cohort.id
       },
       include: [
-        {model: Guest, attributes: { exclude: ['password'] }},
-        {model: Comment},
+        {
+          model: Guest,
+          attributes: { exclude: ['password'] }
+        },
+        {
+          model: Comment,
+          include: [{
+            model: Guest
+          }]
+        },
       ]
     });
     if (req.guest) {
@@ -58,14 +66,17 @@ router.post('/', requireGuest, async (req, res, next) => {
         data: { vacation: newVacation },
       });
     } else {
-      next({message: `Could not create vacation from location ${location} and description ${description}`});
+      next({
+        name: "FailedToCreate",
+        message: `Could not create vacation from location ${location} and description ${description}`
+      });
     }
   } catch (err) {
     next(err)
   }
 })
 
-// PATCH /api/<cohort-name>/vacations/:id
+// PATCH /api/<cohort-name>/vacations/<vacation-id>
 router.patch('/:id', requireGuest, async (req, res, next) => {
   try {
     const {id} = req.params;
@@ -107,7 +118,7 @@ router.patch('/:id', requireGuest, async (req, res, next) => {
   }
 })
 
-// DELETE /api/<cohort-name>/vacations/:id
+// DELETE /api/<cohort-name>/vacations/<vacation-id>
 router.delete('/:id', requireGuest, async (req, res, next) => {
   try {
     const {id} = req.params;
@@ -132,6 +143,50 @@ router.delete('/:id', requireGuest, async (req, res, next) => {
           next({
             name: "FailedToDelete",
             message: "Could not delete this vacation"
+          });
+        }
+      }
+    } else{
+      next({
+        name: "NotFound",
+        message: `could not find vacation id: ${id}`
+      });
+    }
+  } catch (err) {
+    next(err)
+  }
+})
+
+// POST /api/<cohort-name>/vacations/<vacation-id>/comments
+router.post('/:id/comments', requireGuest, async (req, res, next) => {
+  try {
+    const {id} = req.params;
+    const {content} = req.body;
+    const prevVacation = await Vacation.findByPk(id);
+    if(prevVacation) {
+      if(prevVacation.guestId !== req.guest.id) {
+        res.status(403);
+        next({
+          name: "UnauthorizedError",
+          message: "You must be the same user who created this vacation to perform this action"
+        });
+      } else {
+        const newComment = await Comment.create({
+          content,
+          cohortId: req.cohort.id,
+          vacationId: id,
+          guestId: req.guest.id
+        });
+        if(newComment) {
+          res.send({
+            success: true,
+            error: null,
+            data: { comment: newComment },
+          });
+        } else {
+          next({
+            name: "FailedToCreate",
+            message: `Could not create comment from content ${content}`
           });
         }
       }

@@ -4,6 +4,10 @@ const db = require('../db.js');
 const Cohort = db.define('cohort', {
   name: {
     type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    },
   },
 },
 {
