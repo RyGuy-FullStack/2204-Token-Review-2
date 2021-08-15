@@ -13,6 +13,9 @@ An API for Guests to log their Vacation destinations
 ### View App
 Visit [localhost:4000/api/vacations](http://localhost:4000/api/vacations) in your browser
 
+### Read the Docs
+The [docs](api_docs.md) list available routes and resources
+
 ### Force Sync
 To drop DB and rebuild completely, creating a cohort named `foo`: 
 

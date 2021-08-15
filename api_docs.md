@@ -12,12 +12,12 @@ All API urls (aside from the two test endpoints) are versioned by which cohort y
 
 Our versioning works like this
 
-- The base URL is `https://adventure-away.herokuapp.com`
-- The first segment of path is `/api`, every endpoint available to you has that prefix. If you stop there (i.e. if you go to `https://adventure-away.herokuapp.com/api`) you will find this documentation.
+- The base URL is `http://localhost:4000`
+- The first segment of path is `/api`, every endpoint available to you has that prefix. If you stop there (i.e. if you go to `http://localhost:4000/api`) you will find this documentation.
 - The next segment of path is your cohort name, e.g. `/2004-UNF-HY-WEB-PT` or `/2006-CPU-RM-WEB-PT`
 - The last segment of path is based on the resource or action you are taking, e.g. `/vacations` to fetch all vacations.
 
-So, for example, a call for all vacations for the class going by the name **2004-UNF-HY-WEB-PT** would use the URL `https://adventure-away.herokuapp.com/api/2004-UNF-HY-WEB-PT/vacations`.
+So, for example, a call for all vacations for the class going by the name **2004-UNF-HY-WEB-PT** would use the URL `http://localhost:4000/api/2004-UNF-HY-WEB-PT/vacations`.
 
 ### Authentication through JSON Web Tokens
 
@@ -26,7 +26,7 @@ When using the API, many calls are made in the context of a registered guest. Th
 A sample request **with** an authorization token looks like this:
 
 ```js
-fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations', {
+fetch('http://localhost:4000/api/COHORT-NAME/vacations', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ This route is used to create a new guest account. On success, you will be given 
 #### Sample Call
 
 ```js
-fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/guests/register', {
+fetch('http://localhost:4000/api/COHORT-NAME/guests/register', {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
@@ -138,7 +138,7 @@ This route is used for a guest to login when they already have an account. On su
 #### Sample Call
 
 ```js
-fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/guests/login', {
+fetch('http://localhost:4000/api/COHORT-NAME/guests/login', {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
@@ -190,7 +190,7 @@ No request parameters are necessary for this route.
 #### Sample Call
 
 ```js
-fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/guests/me', {
+fetch('http://localhost:4000/api/COHORT-NAME/guests/me', {
   headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer TOKEN_STRING_HERE'
@@ -308,7 +308,7 @@ No request parameters are necessary for this route.
 #### Sample Call
 
 ```js
-fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations')
+fetch('http://localhost:4000/api/COHORT-NAME/vacations')
   .then(response => response.json())
   .then(result => {
     console.log(result);
@@ -415,7 +415,7 @@ A request to this endpoint will attempt to create a new post. You must pass a va
 #### Sample Call
 
 ```js
-fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations', {
+fetch('http://localhost:4000/api/COHORT-NAME/vacations', {
   method: "POST",
   headers: {
     'Content-Type': 'application/json',
@@ -556,7 +556,7 @@ There are no return parameters.
 #### Sample Call
 
 ```js
-fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations/5e8d1bd48829fb0017d2233b', {
+fetch('http://localhost:4000/api/COHORT-NAME/vacations/5e8d1bd48829fb0017d2233b', {
   method: "DELETE",
   headers: {
     'Content-Type': 'application/json',
@@ -604,7 +604,7 @@ This endpoint will create a new message for a vacation whose `id` is equal to `V
 #### Sample Call
 
 ```js
-fetch('https://adventure-away.herokuapp.com/api/COHORT-NAME/vacations/5e8929ddd439160017553e06/comments', {
+fetch('http://localhost:4000/api/COHORT-NAME/vacations/5e8929ddd439160017553e06/comments', {
   method: "POST",
   headers: {
     'Content-Type': 'application/json',
