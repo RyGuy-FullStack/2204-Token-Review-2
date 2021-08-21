@@ -137,7 +137,7 @@ router.delete('/:id', requireGuest, async (req, res, next) => {
           res.send({
             success: true,
             error: null,
-            data: { deletedVacation },
+            data: { prevVacation },
           });
         } else {
           next({
@@ -161,34 +161,26 @@ router.delete('/:id', requireGuest, async (req, res, next) => {
 router.post('/:id/comments', requireGuest, async (req, res, next) => {
   try {
     const {id} = req.params;
-    const {content} = req.body;
+    const {comment: {content}} = req.body;
     const prevVacation = await Vacation.findByPk(id);
     if(prevVacation) {
-      if(prevVacation.guestId !== req.guest.id) {
-        res.status(403);
-        next({
-          name: "UnauthorizedError",
-          message: "You must be the same user who created this vacation to perform this action"
+      const newComment = await Comment.create({
+        content,
+        cohortId: req.cohort.id,
+        vacationId: id,
+        guestId: req.guest.id
+      });
+      if(newComment) {
+        res.send({
+          success: true,
+          error: null,
+          data: { comment: newComment },
         });
       } else {
-        const newComment = await Comment.create({
-          content,
-          cohortId: req.cohort.id,
-          vacationId: id,
-          guestId: req.guest.id
+        next({
+          name: "FailedToCreate",
+          message: `Could not create comment from content ${content}`
         });
-        if(newComment) {
-          res.send({
-            success: true,
-            error: null,
-            data: { comment: newComment },
-          });
-        } else {
-          next({
-            name: "FailedToCreate",
-            message: `Could not create comment from content ${content}`
-          });
-        }
       }
     } else{
       next({
