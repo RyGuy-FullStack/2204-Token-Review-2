@@ -51,7 +51,7 @@ router.get('/', async (req, res, next) => {
 // POST /api/<cohort-name>/vacations
 router.post('/', requireGuest, async (req, res, next) => {
   try {
-    const {location, description} = req.body;
+    const {vacation: {location, description}} = req.body;
     const newVacation = await Vacation.create({
       location,
       description,
@@ -80,7 +80,7 @@ router.post('/', requireGuest, async (req, res, next) => {
 router.patch('/:id', requireGuest, async (req, res, next) => {
   try {
     const {id} = req.params;
-    const {location, description} = req.body;
+    const {vacation: {location, description}} = req.body;
     const prevVacation = await Vacation.findByPk(id);
     if(prevVacation) {
       if(prevVacation.guestId !== req.guest.id) {

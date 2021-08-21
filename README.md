@@ -11,7 +11,7 @@ An API for Guests to log their Vacation destinations
     npm run start:dev
 
 ### View App
-Visit [localhost:4000/api/vacations](http://localhost:4000/api/vacations) in your browser
+Visit [localhost:4000/api/2105-SJS-RM-WEB-PT/vacations](http://localhost:4000/api/2105-SJS-RM-WEB-PT/vacations) in your browser
 
 ### Read the Docs
 The [docs](api_docs.md) list available routes and resources
