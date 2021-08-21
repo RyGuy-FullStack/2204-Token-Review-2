@@ -7,7 +7,7 @@ const { JWT_SECRET = 'neverTell' } = process.env;
 
 // POST /api/<cohort-name>/guests/login
 router.post('/login', async (req, res, next) => {
-  const { username, password } = req.body;
+  const { username, password } = req.body.guest;
 
   // request must have both
   if (!username || !password) {
@@ -41,7 +41,7 @@ router.post('/login', async (req, res, next) => {
 
 // POST /api/<cohort-name>/guests/register
 router.post('/register', async (req, res, next) => {
-  const { username, password } = req.body;
+  const { username, password } = req.body.guest;
 
   // request must have both
   if (!username || !password) {
@@ -90,27 +90,32 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
-// POST /api/<cohort-name>/guests/me
+// GET /api/<cohort-name>/guests/me
 router.get("/me", requireGuest, async (req, res) => {
-  const guest = await Guest.findByPk(req.guest.id, {
-    attributes: { exclude: ['password'] },
-    include: [{
-      model: Vacation,
+  try {
+    const guest = await Guest.findByPk(req.guest.id, {
+      attributes: { exclude: ['password'] },
       include: [{
-        model: Comment,
+        model: Vacation,
         include: [{
-          model: Guest
+          model: Comment,
+          include: [{
+            model: Guest
+          }]
         }]
       }]
-    }]
-  });
-  res.send({
-    success: true,
-    error: null,
-    data: {
-      guest,
-    },
-  });
+    });
+    res.send({
+      success: true,
+      error: null,
+      data: {
+        guest,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 });
 
 module.exports = router;
